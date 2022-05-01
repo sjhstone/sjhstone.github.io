@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Omicron Wave 可视化</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../covid_chartpage.css'>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.2/echarts.min.js"></script>
+
+    <!--
+        <script src='papaparse.min.js'></script>
+        <script src='echarts.min.js'></script>
+    -->
+</head>
+<body>
+    <datalist id="tickmarks">
+        <option value="0"></option>
+        <option value="7"></option>
+        <option value="14"></option>
+        <option value="21"></option>
+        <option value="28"></option>
+        <option value="35"></option>
+        <option value="42"></option>
+        <option value="49"></option>
+        <option value="56"></option>
+        <option value="63"></option>
+    </datalist>
+
+    <div>
+        <div id="day-conter">
+            Omicron <span id="sinceFirstOmicron">144</span> 天
+        </div>
+        <div id="scrollbars">
+            <input type="range" min="0" max="63" step="1" value="63" class="slider" list="tickmarks" id="daysAfter" disabled>
+            <input type="range" min="0" max="82" step="1" value="82" class="slider" id="daysFurther">
+        </div>
+    </div>
+
+    <div id="main">
+        <!-- For Apache ECHARTS -->
+    </div>
+    <script src='plot_districts.js?id=0501b'></script>
+
+    <script>
+        let slider2now = document.getElementById('daysAfter');
+        let slider2far = document.getElementById('daysFurther');
+        // let label2now = document.getElementById('labelDaysAfter');
+        let sinceFirstOmicron = document.getElementById('sinceFirstOmicron');
+
+        slider2now.addEventListener('input', function(e) {
+            if (parseInt(e.target.value) == parseInt(e.target.max)) {
+                slider2far.removeAttribute('disabled');
+                slider2far.setAttribute('value',slider2far.max);
+                slider2now.setAttribute('disabled','');
+            }
+            let pastDays = parseInt(slider2now.value);
+            sameDuration(pastDays);
+            sinceFirstOmicron.innerText = `${pastDays}`;
+        });
+
+        slider2far.addEventListener('input', function(e) {
+            if (parseInt(e.target.value) == parseInt(e.target.min)) {
+                slider2now.removeAttribute('disabled');
+                slider2now.setAttribute('value',7);
+                slider2far.setAttribute('disabled','');
+            }
+            let pastDays = parseInt(slider2now.value) + parseInt(slider2far.value);
+            sameDuration(pastDays);
+            sinceFirstOmicron.innerText = `${pastDays}`;
+        });
+    </script>
+</body>
+</html>
