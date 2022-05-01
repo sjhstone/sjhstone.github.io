@@ -34,11 +34,10 @@
 
     <div>
         <div id="day-conter">
-            Omicron <span id="sinceFirstOmicron">144</span> 天
+            Omicron <span id="sinceFirstOmicron">63</span> 天
         </div>
         <div id="scrollbars">
             <input type="range" min="0" max="63" step="1" value="63" class="slider" list="tickmarks" id="daysAfter" disabled>
-            <input type="range" min="0" max="82" step="1" value="82" class="slider" id="daysFurther">
         </div>
     </div>
 
@@ -49,28 +48,10 @@
 
     <script>
         let slider2now = document.getElementById('daysAfter');
-        let slider2far = document.getElementById('daysFurther');
-        // let label2now = document.getElementById('labelDaysAfter');
         let sinceFirstOmicron = document.getElementById('sinceFirstOmicron');
 
         slider2now.addEventListener('input', function(e) {
-            if (parseInt(e.target.value) == parseInt(e.target.max)) {
-                slider2far.removeAttribute('disabled');
-                slider2far.setAttribute('value',slider2far.max);
-                slider2now.setAttribute('disabled','');
-            }
             let pastDays = parseInt(slider2now.value);
-            sameDuration(pastDays);
-            sinceFirstOmicron.innerText = `${pastDays}`;
-        });
-
-        slider2far.addEventListener('input', function(e) {
-            if (parseInt(e.target.value) == parseInt(e.target.min)) {
-                slider2now.removeAttribute('disabled');
-                slider2now.setAttribute('value',7);
-                slider2far.setAttribute('disabled','');
-            }
-            let pastDays = parseInt(slider2now.value) + parseInt(slider2far.value);
             sameDuration(pastDays);
             sinceFirstOmicron.innerText = `${pastDays}`;
         });

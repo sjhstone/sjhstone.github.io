@@ -93,7 +93,7 @@ let option = {
                             }
                         },
                         yAxis: {
-                            type: opt.xAxis[0].type === 'log' ? 'value' : 'log',
+                            type: opt.yAxis[0].type === 'log' ? 'value' : 'log',
                             name: '日增',
                             minorSplitLine: {
                                 show: true
