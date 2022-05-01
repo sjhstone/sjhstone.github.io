@@ -19,6 +19,8 @@ let cities = {
     chongming: [],
 };
 
+const default_shown_city = {pudong: true};
+
 let citynames = {
     pudong: '浦东',
     huangpu: '黄浦',
@@ -51,6 +53,9 @@ window.onresize = function(){
 }
 
 let option = {
+    labelLayout: {
+        moveOverlap: 'shiftY'
+    },
     grid: {
         left: 65,
         right: 50,
@@ -154,8 +159,13 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                 type: 'line', name: citynames[city], datasetId: 'main',
                 encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}_7日平均`, tooltip:[0,1,i+2,18+2*i,19+2*i]},
                 emphasis: {focus: 'series'},
+                endLabel:{
+                    show: true,
+                    formatter: '{a}',
+                },
             });
             option.legend.data.push(citynames[city])
+            option.legend.selected[citynames[city]] = city in default_shown_city;
             i += 1;
         }
         dailyVsAccumChart.hideLoading();
