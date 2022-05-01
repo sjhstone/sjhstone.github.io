@@ -1,0 +1,52 @@
+body
+{
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+body:before{
+    content: '';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    background: url(watermark.png) 0 0 repeat;
+    background-position: center;
+    user-select: none; /* Non-prefixed version for chorme, opera and*/
+    -ms-user-select: none; /* Internet Explorer, Edge */
+    -moz-user-select: none; /* Firefox */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    /* opacity: 0.1; */
+}
+
+div#main
+{
+  width: 100%;
+  min-height: 750px;
+  height: max-content;
+  /* position: absolute; */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+
+div#scrollbars, div#day-conter
+{
+    width: 100%;
+    text-align: center;
+}
+div#day-conter {
+    font-size: 1.25em;
+}
+input#daysAfter, input#daysFurther
+{
+    width: 45%;
+}
