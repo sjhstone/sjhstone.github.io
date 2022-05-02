@@ -16,8 +16,8 @@ let citynames = {
     osaka: '大阪',
     tokyo: '东京',
     hongkong: '香港',
-    shanghai: '上海',
-    beijing: '北京',
+    shanghai: '上海含输入',
+    beijing: '北京仅本地',
 };
 
 let citycolors = {
