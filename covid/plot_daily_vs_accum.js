@@ -16,8 +16,8 @@ let citynames = {
     osaka: '大阪',
     tokyo: '东京',
     hongkong: '香港',
-    shanghai: '上海含输入',
-    beijing: '北京仅本地',
+    shanghai: '上海',
+    beijing: '北京',
 };
 
 let citycolors = {
@@ -151,6 +151,11 @@ for (const city in cities) {
                 emphasis: {focus: 'series'},
                 itemStyle: {color: citycolors[city], borderWidth: 0, borderCap: 'round'},
                 lineStyle: {color: citycolors[city]},
+                endLabel:{
+                    show: true,
+                    formatter: '{a}\n本轮第{@天数}天\n当日{@日增} (7日平均{@近7日平均日增})\n累计{@累计}',
+                    color: 'inherit',
+                },
             });
             option.series.push({
                 type: 'scatter', name: `${citynames[city]}当日原始`, datasetId: city,

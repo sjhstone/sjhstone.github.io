@@ -162,6 +162,7 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                 endLabel:{
                     show: true,
                     formatter: '{a}',
+                    color: 'inherit',
                 },
             });
             option.legend.data.push(citynames[city])
