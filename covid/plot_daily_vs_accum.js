@@ -137,6 +137,7 @@ for (const city in cities) {
         download: true,
         // header: true, // json-like
         dynamicTyping: true,
+        skipEmptyLines: true,
         complete: function(results) {
             cities[city] = results.data;
 

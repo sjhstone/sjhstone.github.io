@@ -143,6 +143,7 @@ dailyVsAccumChart.showLoading('default', {text: '数据加载中'});
 
 Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
     download: true,
+    skipEmptyLines: true,
     dynamicTyping: true,
     complete: function(results) {
         raw_data = results.data;
@@ -166,7 +167,13 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                 },
             });
             option.legend.data.push(citynames[city])
-            option.legend.selected[citynames[city]] = city in default_shown_city;
+            option.series.push({
+                type: 'scatter', name: citynames[city], datasetId: 'main',
+                encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}`, tooltip:[0,1,i+2]},
+                emphasis: {focus: 'series'},
+            });
+            option.legend.data.push(citynames[city] + '原始')
+            // option.legend.selected[citynames[city]] = city in default_shown_city;
             i += 1;
         }
         dailyVsAccumChart.hideLoading();
@@ -204,5 +211,3 @@ function sameDuration(x) {
     dailyVsAccumChart.hideLoading();
     dailyVsAccumChart.setOption(option);
 }
-
-
