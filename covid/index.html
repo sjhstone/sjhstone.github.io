@@ -52,6 +52,7 @@
         slider2now.addEventListener('input', function(e) {
             if (parseInt(e.target.value) == parseInt(e.target.max)) {
                 slider2far.removeAttribute('disabled');
+                slider2far.value = slider2far.max;
                 slider2far.setAttribute('value',slider2far.max);
                 slider2now.setAttribute('disabled','');
             }
@@ -63,6 +64,7 @@
         slider2far.addEventListener('input', function(e) {
             if (parseInt(e.target.value) == parseInt(e.target.min)) {
                 slider2now.removeAttribute('disabled');
+                slider2now.value = 7;
                 slider2now.setAttribute('value',7);
                 slider2far.setAttribute('disabled','');
             }
