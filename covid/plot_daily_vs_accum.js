@@ -154,14 +154,19 @@ for (const city in cities) {
             option.legend.data.push(`${citynames[city]}当日原始`)
             option.legend.selected[`${citynames[city]}当日原始`] = false;
 
-            if (citynames[city] === '首尔') {
-                let max_days = results.data.slice(-1)[0][0];
-                slider.max = max_days;
-                slider.setAttribute('max', max_days);
-                slider.value = max_days;
-                slider.setAttribute('value', max_days);
+            let npastdays = results.data.slice(-1)[0][0];
+            let tickopt = document.createElement('option');
+            tickopt.setAttribute('id', `${citynames[city]}-tick`);
+            tickopt.setAttribute('value', npastdays);
+            slidertick.appendChild(tickopt)
+            slider.setAttribute('list', 'tickmarks');
+            if (npastdays > slider.max) {
+                slider.max = npastdays;
+                slider.setAttribute('max', npastdays);
+                slider.value = npastdays;
+                slider.setAttribute('value', npastdays);
                 slider.removeAttribute('disabled');
-                sinceFirstOmicron.innerText = `${max_days}`;
+                sinceFirstOmicron.innerText = `${npastdays}`;
             }
 
             dailyVsAccumChart.hideLoading();

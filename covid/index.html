@@ -16,6 +16,8 @@
 </head>
 <body>
     <div id="controlui">
+        <datalist id="tickmarks">
+        </datalist>
         <div id="day-conter">
             第 <span id="sinceFirstOmicron">50</span> 天 <input type="range" min="0" max="100" step="1" value="50" class="slider" id="daysAfter" disabled>
         </div>
@@ -27,6 +29,7 @@
 
     <script>
         let slider = document.getElementById('daysAfter');
+        let slidertick = document.getElementById('tickmarks');
         let sinceFirstOmicron = document.getElementById('sinceFirstOmicron');
 
         slider.addEventListener('input', function(e) {
@@ -37,6 +40,6 @@
         });
     </script>
 
-    <script src='plot_daily_vs_accum.js?id=0504a'></script>
+    <script src='plot_daily_vs_accum.js?id=0505a'></script>
 </body>
 </html>
