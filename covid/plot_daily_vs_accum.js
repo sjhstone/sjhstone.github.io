@@ -43,34 +43,25 @@ window.onresize = function(){
 
 let option = {
     grid: {
-        left: 65,
-        right: 50,
-        top: 35,
-        bottom: 20,
+        left: 25,
+        right: 0,
+        top: 0,
+        bottom: 25,
     },
     dataZoom: [
         {
             type: 'inside',
         },
         {
-            type: 'slider',
-            showDataShadow: false,
-        },
-        {
             type: 'inside',
             orient: 'vertical'
         },
-        {
-            type: 'slider',
-            showDataShadow: false,
-            orient: 'vertical'
-        }
     ],
     legend: {
         data: [],
         selected: {},
-        top: 50,
-        left: 85,
+        top: 12,
+        left: 40,
         orient: 'vertical',
     },
     toolbox: {
@@ -106,16 +97,12 @@ let option = {
     },
     tooltip: {
         trigger: 'item',
-        // axisPointer: {
-        //     type: 'cross',
-        //     label: {
-        //         precision: '0',
-        //     }
-        // },
     },
     xAxis: {
         type: 'log',
         name: '累计',
+        nameLocation: 'center',
+        nameGap: -20,
         minorSplitLine: {
             show: true
         }
@@ -123,6 +110,11 @@ let option = {
     yAxis: {
         type: 'log',
         name: '日增',
+        nameLocation: 'center',
+        nameGap: -20,
+        axisLabel: {
+            rotate: 90,
+        },
         minorSplitLine: {
             show: true
         }
@@ -135,7 +127,6 @@ dailyVsAccumChart.showLoading('default', {text: '数据加载中'});
 for (const city in cities) {
     Papa.parse(`data/${city}.csv?t=${(new Date()).getTime()}`, {
         download: true,
-        // header: true, // json-like
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
@@ -152,14 +143,9 @@ for (const city in cities) {
                 emphasis: {focus: 'series'},
                 itemStyle: {color: citycolors[city], borderWidth: 0, borderCap: 'round'},
                 lineStyle: {color: citycolors[city]},
-                endLabel:{
-                    show: true,
-                    formatter: '{a}\n本轮第{@天数}天\n当日{@日增} (7日平均{@近7日平均日增})\n累计{@累计}',
-                    color: 'inherit',
-                },
             });
             option.series.push({
-                type: 'scatter', name: `${citynames[city]}当日原始`, datasetId: city,
+                type: 'scatter', name: citynames[city], datasetId: city,
                 encode: {x: '累计', y: '日增', tooltip:[0,1,3]},
                 itemStyle: {color: citycolors[city], borderWidth: 0, borderCap: 'round'}
             });
@@ -167,6 +153,17 @@ for (const city in cities) {
             option.legend.selected[citynames[city]] = city in default_shown_city;
             option.legend.data.push(`${citynames[city]}当日原始`)
             option.legend.selected[`${citynames[city]}当日原始`] = false;
+
+            if (citynames[city] === '首尔') {
+                let max_days = results.data.slice(-1)[0][0];
+                slider.max = max_days;
+                slider.setAttribute('max', max_days);
+                slider.value = max_days;
+                slider.setAttribute('value', max_days);
+                slider.removeAttribute('disabled');
+                sinceFirstOmicron.innerText = `${max_days}`;
+            }
+
             dailyVsAccumChart.hideLoading();
             dailyVsAccumChart.setOption(option);
         }
@@ -203,7 +200,7 @@ function sameDuration(x) {
         });
 
         option.series.push({
-            type: 'scatter', name: `${citynames[city]}当日原始`, datasetId: `${city}_trimmed`,
+            type: 'scatter', name: citynames[city], datasetId: `${city}_trimmed`,
             encode: {x: '累计', y: '日增', tooltip:[0,1,3]},
             emphasis: {focus: 'series'},
             itemStyle: {color: citycolors[city]},
