@@ -67,18 +67,9 @@ let option = {
             type: 'inside',
         },
         {
-            type: 'slider',
-            showDataShadow: false,
-        },
-        {
             type: 'inside',
             orient: 'vertical'
         },
-        {
-            type: 'slider',
-            showDataShadow: false,
-            orient: 'vertical'
-        }
     ],
     legend: {
         data: [],
