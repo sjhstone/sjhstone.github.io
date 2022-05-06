@@ -159,16 +159,21 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                     color: 'inherit',
                 },
             });
-            option.legend.data.push(citynames[city])
             option.series.push({
                 type: 'scatter', name: citynames[city], datasetId: 'main',
                 encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}`, tooltip:[0,1,i+2]},
                 emphasis: {focus: 'series'},
             });
-            option.legend.data.push(citynames[city] + '原始')
+            option.legend.data.push(citynames[city])
             // option.legend.selected[citynames[city]] = city in default_shown_city;
             i += 1;
         }
+        let max_ndays = results.data.slice(-1)[0][0];
+        slider2now.max = max_ndays;
+        slider2now.setAttribute('max', max_ndays);
+        slider2now.value = max_ndays;
+        slider2now.setAttribute('value', max_ndays);
+        sinceFirstOmicron.innerText = `${max_ndays}`;
         dailyVsAccumChart.hideLoading();
         dailyVsAccumChart.setOption(option);
     }
@@ -197,6 +202,11 @@ function sameDuration(x) {
         option.series.push({
             type: 'line', name: citynames[city], datasetId: 'trimmed',
             encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}_7日平均`, tooltip:[0,1,i+2,18+2*i,19+2*i]},
+            emphasis: {focus: 'series'},
+        });
+        option.series.push({
+            type: 'scatter', name: citynames[city], datasetId: 'trimmed',
+            encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}`, tooltip:[0,1,i+2]},
             emphasis: {focus: 'series'},
         });
         i += 1;

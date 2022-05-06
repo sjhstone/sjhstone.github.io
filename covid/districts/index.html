@@ -21,41 +21,33 @@
 </head>
 <body>
     <datalist id="tickmarks">
-        <option value="0"></option>
-        <option value="7"></option>
-        <option value="14"></option>
-        <option value="21"></option>
-        <option value="28"></option>
-        <option value="35"></option>
-        <option value="42"></option>
-        <option value="49"></option>
-        <option value="56"></option>
-        <option value="63"></option>
+        <option value="30">浦东浦南崇明封控</option>
+        <option value="34">浦西封控</option>
+        <option value="63">嘉荷新苑方舱关舱</option>
     </datalist>
 
-    <div>
+    <div id="controlui">
+        <datalist id="tickmarks">
+        </datalist>
         <div id="day-conter">
-            Omicron <span id="sinceFirstOmicron">65</span> 天
-        </div>
-        <div id="scrollbars">
-            <input type="range" min="0" max="65" step="1" value="65" class="slider" list="tickmarks" id="daysAfter">
+            第 <span id="sinceFirstOmicron">68</span> 天 <input type="range" min="29" max="30" step="1" value="30" class="slider" list="tickmarks" id="daysAfter">
         </div>
     </div>
 
     <div id="main">
         <!-- For Apache ECHARTS -->
     </div>
-    <script src='plot_districts.js?id=0506'></script>
-
+    
     <script>
         let slider2now = document.getElementById('daysAfter');
         let sinceFirstOmicron = document.getElementById('sinceFirstOmicron');
-
+        
         slider2now.addEventListener('input', function(e) {
             let pastDays = parseInt(slider2now.value);
             sameDuration(pastDays);
             sinceFirstOmicron.innerText = `${pastDays}`;
         });
     </script>
+    <script src='plot_districts.js?id=0506'></script>
 </body>
 </html>
