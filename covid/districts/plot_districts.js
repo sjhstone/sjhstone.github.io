@@ -65,10 +65,12 @@ let option = {
     dataZoom: [
         {
             type: 'inside',
+            filterMode: 'none'
         },
         {
             type: 'inside',
-            orient: 'vertical'
+            orient: 'vertical',
+            filterMode: 'none'
         },
     ],
     legend: {

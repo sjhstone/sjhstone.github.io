@@ -51,10 +51,12 @@ let option = {
     dataZoom: [
         {
             type: 'inside',
+            filterMode: 'none'
         },
         {
             type: 'inside',
-            orient: 'vertical'
+            orient: 'vertical',
+            filterMode: 'none'
         },
     ],
     legend: {
@@ -156,8 +158,9 @@ for (const city in cities) {
 
             let npastdays = results.data.slice(-1)[0][0];
             let tickopt = document.createElement('option');
-            tickopt.setAttribute('id', `${citynames[city]}-tick`);
+            tickopt.setAttribute('id', `${city}-tick`);
             tickopt.setAttribute('value', npastdays);
+            tickopt.setAttribute('label', citynames[city]);
             slidertick.appendChild(tickopt)
             slider.setAttribute('list', 'tickmarks');
             if (npastdays > slider.max) {
