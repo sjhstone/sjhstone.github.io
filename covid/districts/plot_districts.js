@@ -139,7 +139,11 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
     skipEmptyLines: true,
     dynamicTyping: true,
     complete: function(results) {
-        raw_data = results.data;
+        let raw_data = results.data.map(
+            x => x.map(
+                y => y === 0 ? null : y
+            )
+        );
 
         option.dataset.push({
             id: 'main',
@@ -168,7 +172,7 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
             // option.legend.selected[citynames[city]] = city in default_shown_city;
             i += 1;
         }
-        let max_ndays = results.data.slice(-1)[0][0];
+        let max_ndays = raw_data.slice(-1)[0][0];
         slider2now.max = max_ndays;
         slider2now.setAttribute('max', max_ndays);
         slider2now.value = max_ndays;
