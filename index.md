@@ -14,11 +14,12 @@
 ### 形式说明
 通过 [COVID-19-East-Asia-Megacities](https://github.com/sjhstone/COVID-19-East-Asia-Megacities) 中代码对各地疫情宏观统计数据进行处理后绘制的可视化图表。
 
-可视化时，采用了 [Minute Physics](https://www.bilibili.com/video/BV1L7411X7dt) 所介绍的较为直观的日增—累计曲线。[这条微博](https://weibo.com/1710673312/Lr7h4pOln) 针对这种形式做了进一步的说明。[Our World in Data](https://ourworldindata.org/grapher/covid-daily-vs-total-cases-per-million) 上也有每日更新的世界各国曲线。
+可视化时，采用了 [Minute Physics 所介绍的较为直观的日增—累计曲线](https://www.bilibili.com/video/BV1L7411X7dt)。[这条微博](https://weibo.com/1710673312/Lr7h4pOln) 针对这种形式做了进一步的说明。[Our World in Data 上也有每日更新的世界各国曲线](https://ourworldindata.org/grapher/covid-daily-vs-total-cases-per-million)。
 
 各地方卫健委一般在早上8:00左右通报信息，而国家卫健委一般在早上9:30左右发布汇总后的通报。图表不早于国家卫健委进行每日更新。
 
+推荐拓展了解：[在哪里能看到及时的全球病毒变异情况](./sars-cov-2/)
 
 ----
 
-本页面最后更改于 2022-05-08 20:45:00 (GMT+8)
+本页面最后更改于 2022-05-09 14:26 (GMT+8)
