@@ -49,7 +49,7 @@
         <option value="53">齐心协力打赢社会面清零攻坚战！</option>
         <option value="54">集中力量，一鼓作气，对疫情重点街镇社区、重点场所拔点攻坚!</option>
         <option value="55">坚定必胜信心，保持攻坚态势!</option>
-        <option value="56">加快拔点攻坚，有力阻断传播，"全力跑赢病毒!</option>
+        <option value="56">加快拔点攻坚，有力阻断传播，全力跑赢病毒!</option>
         <option value="57">抱定必胜信心，加快工作进度，切实将各项举措落实到位!</option>
         <option value="58">切断疫情传播链条，守牢扩大清零攻坚的阵地!</option>
         <option value="59">加快实现社会面清零目标，早日恢复正常生产生活秩序!</option>
@@ -68,15 +68,15 @@
         <datalist id="tickmarks">
         </datalist>
         <div id="day-conter">
-            第 <span id="sinceFirstOmicron">68</span> 天 <input type="range" min="29" max="30" step="1" value="30" class="slider" list="tickmarks" id="daysAfter">
+            第 <span id="sinceFirstOmicron">68</span> 天 <input type="range" min="29" max="30" step="1" value="30" class="slider" list="tickmarks" id="daysAfter"> <button onclick="playByTime();">▶</button>
         </div>
     </div>
 
     <div id="main">
         <!-- For Apache ECHARTS -->
     </div>
-    <div id="event" style="position: absolute; right: 75px; top: 100px; text-align: right;"></div>
-    <div id="headline" style="position: absolute; right: 75px; bottom: 35px; text-align: right;"></div>
+    <div id="event" style="position: absolute; right: 25px; top: 75px; text-align: right;"></div>
+    <div id="headline" style="position: absolute; right: 25px; bottom: 45px; text-align: right;"></div>
     
     <script>
         let slider2now = document.getElementById('daysAfter');
@@ -94,7 +94,7 @@
         let daysWithEvent = [...daysDataList.options].map(x => whichEventOnDay.set(parseInt(x.value), x.label));
         let daysWithHeadline = [...daysHeadList.options].map(x => whichHeadlineDay.set(parseInt(x.value), x.label));
         
-        slider2now.addEventListener('input', function(e) {
+        function refilterData() {
             let pastDays = parseInt(slider2now.value);
             sameDuration(pastDays);
             sinceFirstOmicron.innerText = `${pastDays}`;
@@ -110,7 +110,33 @@
             } else {
                 headlineDiv.innerText = '';
             }
-        });
+        }
+        slider2now.addEventListener('input', refilterData);
+
+        let runningReplay = null;
+        let auto_ndays = 29;
+
+        function incDayAndUpdate()
+        {
+            slider2now.value = auto_ndays;
+            slider2now.setAttribute('value', auto_ndays);
+            refilterData();
+            auto_ndays++;
+
+            if (auto_ndays > parseInt(slider2now.max)) {
+                auto_ndays = 29;
+                clearInterval(runningReplay);
+                runningReplay = null;
+            }
+        }
+
+        function playByTime()
+        {
+            if (runningReplay !== null){
+                clearInterval(runningReplay);
+            }
+            runningReplay = setInterval(incDayAndUpdate, 550);
+        }
     </script>
     <script src='plot_districts.js?id=0509'></script>
 </body>

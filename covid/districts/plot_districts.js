@@ -57,10 +57,10 @@ let option = {
         moveOverlap: 'shiftY'
     },
     grid: {
-        left: 65,
-        right: 50,
-        top: 35,
-        bottom: 20,
+        left: 25,
+        right: 0,
+        top: 0,
+        bottom: 25,
     },
     dataZoom: [
         {
@@ -76,8 +76,8 @@ let option = {
     legend: {
         data: [],
         selected: {},
-        top: 50,
-        left: 85,
+        top: 12,
+        left: 40,
         orient: 'vertical',
     },
     toolbox: {
@@ -117,16 +117,27 @@ let option = {
     xAxis: {
         type: 'log',
         name: '累计',
+        nameLocation: 'center',
+        nameGap: -20,
         minorSplitLine: {
             show: true
-        }
+        },
+        min: 100,
+        max: 350000,
     },
     yAxis: {
         type: 'log',
         name: '日增',
+        nameLocation: 'center',
+        nameGap: -20,
+        axisLabel: {
+            rotate: 90,
+        },
         minorSplitLine: {
             show: true
-        }
+        },
+        min: 1,
+        max: 50000,
     },
     series: [],
     dataset: []
