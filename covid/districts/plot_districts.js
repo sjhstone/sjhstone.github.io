@@ -167,9 +167,22 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                 type: 'scatter', name: citynames[city], datasetId: 'main',
                 encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}`, tooltip:[0,1,i+2]},
                 emphasis: {focus: 'series'},
+                markPoint: {
+                    symbol: 'pin',
+                    symbolSize: 65,
+                    label: {
+                        formatter: '{b}',
+                    },
+                    data: [
+                        {
+                            name: `${citynames[city]}\n峰值`,
+                            type: 'max',
+                        }
+                    ]
+                }
             });
             option.legend.data.push(citynames[city])
-            // option.legend.selected[citynames[city]] = city in default_shown_city;
+            option.legend.selected[citynames[city]] = city in default_shown_city;
             i += 1;
         }
         let max_ndays = raw_data.slice(-1)[0][0];

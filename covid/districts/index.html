@@ -23,7 +23,45 @@
     <datalist id="tickmarks">
         <option value="30">浦东浦南崇明封控</option>
         <option value="34">浦西封控</option>
-        <option value="63">嘉荷新苑方舱关舱</option>
+        <option value="52">出院舱数超新感染数</option>
+        <option value="63">首个市级方舱关舱</option>
+        <option value="68">大上海保卫战</option>
+    </datalist>
+    <datalist id="newsheadlines">
+        <option value="35">尽锐出战，以快制快，用最短时间遏制疫情扩散！</option>
+        <option value="36">坚定信心迎难而上周密组织，坚决打赢大仗硬仗！</option>
+        <option value="37">努力用最短时间实现社会面清零目标！</option>
+        <option value="38">有力推进“四应四尽”，坚决打赢疫情防控攻坚战!</option>
+        <option value="39">全力守护市民群众安康，确保城市核心功能正常运转!</option>
+        <option value="40">增强紧迫感责任感，紧盯封控、流调、转运等重点环节！</option>
+        <option value="41">坚决打赢疫情防控阻击战，早日恢复正常生产生活!</option>
+        <option value="42">从严从紧落实各项防控措施，千方百计抓好保运保供保链!</option>
+        <option value="43">坚定信心迎难而上，咬紧牙关持续奋战!</option>
+        <option value="44">坚定信心连续奋战，全力打赢疫情防控攻坚战!</option>
+        <option value="45">全力做好医疗救治和保供稳链工作!</option>
+        <option value="46">以更坚决更果断的措施，在与病毒赛跑中赢得主动!</option>
+        <option value="47">坚持“动态清零”总方针不犹豫不动摇!</option>
+        <option value="48">动用一切力量和资源，尽早实现社会面清零!</option>
+        <option value="49">认识再提高，行动再坚决，措施再落实!</option>
+        <option value="50">勠力同心、以快制快、一气呵成，尽快实现社会面清零目标!</option>
+        <option value="51">决战冲锋、攻坚克难!</option>
+        <option value="52">牢牢锁定社会面清零攻坚行动目标，下定更大决心把防控工作抓实抓细抓到位！</option>
+        <option value="53">齐心协力打赢社会面清零攻坚战！</option>
+        <option value="54">集中力量，一鼓作气，对疫情重点街镇社区、重点场所拔点攻坚!</option>
+        <option value="55">坚定必胜信心，保持攻坚态势!</option>
+        <option value="56">加快拔点攻坚，有力阻断传播，"全力跑赢病毒!</option>
+        <option value="57">抱定必胜信心，加快工作进度，切实将各项举措落实到位!</option>
+        <option value="58">切断疫情传播链条，守牢扩大清零攻坚的阵地!</option>
+        <option value="59">加快实现社会面清零目标，早日恢复正常生产生活秩序!</option>
+        <option value="60">在行动快、管理严、措施实上再加力、下功夫!</option>
+        <option value="61">拔点攻坚，严防反弹，迅速有力推进社会面清零!</option>
+        <option value="62">以坚决果断行动推动各项防控措施落地见效!</option>
+        <option value="63">攻坚克难、决战决胜，尽快打赢这场疫情防控攻坚战！</option>
+        <option value="64">持续攻坚，扩大战果，一鼓作气实现社会面清零！</option>
+        <option value="69">振奋精气神、立下军令状，排除万难冲锋攻坚!</option>
+        <option value="70">狠抓工作落实，抢出时间进度，集中优势兵力，全力加快清零攻坚</option>
+        <option value="71">要求以更大决心更果断措施狠抓攻坚突破、拔点清面</option>
+        <option value="72">坚定必胜信心，做到守土有责守土尽责</option>
     </datalist>
 
     <div id="controlui">
@@ -37,17 +75,43 @@
     <div id="main">
         <!-- For Apache ECHARTS -->
     </div>
+    <div id="event" style="position: absolute; right: 75px; top: 100px; text-align: right;"></div>
+    <div id="headline" style="position: absolute; right: 75px; bottom: 35px; text-align: right;"></div>
     
     <script>
         let slider2now = document.getElementById('daysAfter');
         let sinceFirstOmicron = document.getElementById('sinceFirstOmicron');
         
+        let daysDataList = document.getElementById('tickmarks');
+        let eventDiv = document.getElementById('event');
+        
+        let daysHeadList = document.getElementById('newsheadlines');
+        let headlineDiv = document.getElementById('headline');
+        
+        let whichEventOnDay = new Map();
+        let whichHeadlineDay = new Map();
+
+        let daysWithEvent = [...daysDataList.options].map(x => whichEventOnDay.set(parseInt(x.value), x.label));
+        let daysWithHeadline = [...daysHeadList.options].map(x => whichHeadlineDay.set(parseInt(x.value), x.label));
+        
         slider2now.addEventListener('input', function(e) {
             let pastDays = parseInt(slider2now.value);
             sameDuration(pastDays);
             sinceFirstOmicron.innerText = `${pastDays}`;
+            
+            if (whichEventOnDay.has(pastDays)) {
+                eventDiv.innerText = whichEventOnDay.get(pastDays);
+            } else {
+                eventDiv.innerText = '';
+            }
+
+            if (whichHeadlineDay.has(pastDays)) {
+                headlineDiv.innerText = whichHeadlineDay.get(pastDays);
+            } else {
+                headlineDiv.innerText = '';
+            }
         });
     </script>
-    <script src='plot_districts.js?id=0506'></script>
+    <script src='plot_districts.js?id=0509'></script>
 </body>
 </html>
