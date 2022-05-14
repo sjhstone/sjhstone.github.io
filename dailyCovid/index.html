@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>上海COVID-19看板</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
+
+    <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.2/echarts.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        html {
+            font-family: 'Bahnschrift', 'Source Han Sans', 'SimHei';
+        }
+    </style>
+</head>
+
+
+
+
+
+<body>
+
+<script>
+function overall2png() {
+    html2canvas(
+        document.querySelector("#overall-data")
+    ).then(canvas => {
+        document.body.appendChild(canvas)
+    });
+}
+</script>
+<p>
+    <button onclick="setTimeout(overall2png, 3000);">Take shot in 3 seconds!</button>
+</p>
+
+
+<div id="overall-data" style="width: 850px; height: 850px; display: flex; flex-direction: column; align-items:stretch; border: solid; padding: 10px;">
+    <div id="total-count" style="width: 100%; height: 90px; display: flex; align-items:stretch; flex-flow: row wrap; justify-content: center; background-color: #fafafe;">
+        <div id="total" style="flex-grow: 2; display: flex; justify-content:space-around; align-items: center;">
+            <div id="total-caption" style="font-size: 1.5em; text-align: right;">自2月26日起<br/>累计感染</div>
+            <div id="total-figure" style="font-size: 4em; font-weight:bolder">0</div>
+        </div>
+        <div id="deceased" style="flex-grow: 1; display: flex; justify-content:space-around; align-items: center;">
+            <div id="deceased-caption" style="text-align: right; border: sol;">累计<br/>死亡</div>
+            <div id="deceased-figure" style="font-size: 3em; font-weight:bolder;">0</div>
+            <div id="deceased-pct-caption" style="text-align: right; border: sol;">死亡率</div>
+            <div id="deceased-percent" style="font-size: 2.5em;">0%</div>
+        </div>
+    </div>
+
+    <div id="chart-daily-new-cases" style="width: 100%; height: 385px;">
+    </div>
+
+    <div id="chart-asymptomatic-prop" style="width: 100%; height: 385px;">
+    </div>
+</div>
+
+<div id="chart-districts" style="width: 500px; height: 1750px; background-color: white;">
+</div>
+
+<script type="application/ecmascript">
+// const distPltInst = echarts.init(
+//     document.getElementById('chart-districts'), null, {renderer: 'svg',}
+// );
+const distPltInst = echarts.init(
+    document.getElementById('chart-districts'), null, {}
+);
+
+let distPltOpt = {
+    title: {
+        text: (new Date()).toISOString().substring(5, 10) + '\n各区\n情况',
+        top: 535,
+        right: 38,
+        align: 'right',
+        textStyle: {
+            fontSize: 45,
+        },
+    },
+    backgroundColor: '#fff',
+    grid: {
+        left: 65,
+        right: 25,
+        top: 25,
+        bottom: 25,
+    },
+    textStyle: {
+        fontFamily: 'Bahnschrift',
+    },
+    xAxis: {
+        type: 'value',
+        position: 'top'
+    },
+    yAxis: {
+        type: 'category',
+        axisLabel: {
+            fontSize: 20,
+            color: '#000',
+            fontWeight: 'bolder',
+        },
+    },
+    series: [],
+    dataset: [],
+}
+
+Papa.parse(`districtwise_within_quarantine.csv?t=${(new Date()).getTime()}`, {
+    download: true,
+    skipEmptyLines: true,
+    dynamicTyping: true,
+    complete: function(results) {
+        // console.log(results.data);
+        
+        let data_body = {
+            id: '各区闭环',
+            dimensions: results.data[0],
+            source: results.data.slice(1),
+        }
+        // console.log(data_body);
+        let data_dimension_cols = data_body.dimensions;
+
+        distPltOpt.dataset.push(data_body);
+
+        // 每一列对应一个独立的条
+
+        let dateComp = parseInt((new Date()).toISOString().substring(0, 10).split('-').join(''));
+
+        for (const col of data_dimension_cols) {
+
+            if (col === '区县') {
+                continue;
+            }
+
+            let seriesDay = parseInt(col.split('-').join(''));
+            let pastDays = dateComp - seriesDay;
+
+            distPltOpt.series.push({
+                name: col + '闭环',
+                datasetId: '各区闭环',
+                type: 'bar',
+                xAxisIndex: 0, yAxisIndex: 0,
+                itemStyle: {
+                    color: `rgba(10,80,160,${1 - pastDays/21})`
+                },
+                label: {
+                    show: true,
+                    align: 'left',
+                    position: 'right',
+                    fontSize: 22,
+                    fontWeight: 'bolder',
+                    verticalAlign: 'center',
+                    textBorderColor: 'rgba(255,255,255,0.85)',
+                    textBorderWidth: 5,
+                    color: 'rgb(10,80,160)',
+                    formatter: function (params) {
+                        return (pastDays <= 1) ? `闭环 ${params.value[params.encode.x[0]]}` : '';
+                    }
+                }
+            });
+        }
+        distPltInst.setOption(distPltOpt);
+    }
+});
+
+Papa.parse(`districtwise_outside_quarantine.csv?t=${(new Date()).getTime()}`, {
+    download: true,
+    skipEmptyLines: true,
+    dynamicTyping: true,
+    complete: function(results) {
+        // console.log(results.data);
+        
+        let data_body = {
+            id: '各区社会面',
+            dimensions: results.data[0],
+            source: results.data.slice(1),
+        }
+        // console.log(data_body);
+        let data_dimension_cols = data_body.dimensions;
+
+        distPltOpt.dataset.push(data_body);
+
+        // 每一列对应一个独立的条
+
+        let dateComp = parseInt((new Date()).toISOString().substring(0, 10).split('-').join(''));
+        for (const col of data_dimension_cols) {
+
+            if (col === '区县') {
+                continue;
+            }
+
+            let seriesDay = parseInt(col.split('-').join(''));
+            let pastDays = dateComp - seriesDay;
+
+
+            distPltOpt.series.push({
+                name: col + '社会面',
+                type: 'bar',
+                datasetId: '各区社会面',
+                xAxisIndex: 0, yAxisIndex: 0,
+                itemStyle: {
+                    color: `rgba(80,10,160,${1 - pastDays/21})`
+                },
+                label: {
+                    show: true,
+                    align: 'left',
+                    position: 'right',
+                    fontSize: 22,
+                    fontWeight: 'bolder',
+                    verticalAlign: 'center',
+                    textBorderColor: 'rgba(255,255,255,0.85)',
+                    textBorderWidth: 5,
+                    color: 'rgb(80,10,160)',
+                    formatter: function (params) {
+                        return (pastDays <= 1) ? `社会面 ${params.value[params.encode.x[0]]}` : '';
+                    }
+                }
+            });
+        }
+        distPltInst.setOption(distPltOpt);
+    }
+});
+
+
+
+
+// 概览图
+const overAllData = {
+    totalFigure: document.querySelector('div#total-figure'),
+    deceasedFigure: document.querySelector('div#deceased-figure'),
+    deceasedPercent: document.querySelector('div#deceased-percent')
+};
+fetch('shanghai_summary.json')
+  .then(response => response.json())
+  .then(data => {
+       overAllData.totalFigure.innerText = data['感染'].toLocaleString();
+       overAllData.deceasedFigure.innerText = data['死亡'].toLocaleString();
+       overAllData.deceasedPercent.innerText = '≈' + (100*data['死亡']/data['感染']).toFixed(3) + '%';
+   });
+
+// 净新增图
+const dailyNewCasesChartInstance = echarts.init(
+    document.getElementById('chart-daily-new-cases'), 
+    null,
+    {
+        renderer: 'svg',
+    }
+);
+let dailyNewCasesChartOption = {
+    title: {
+        text: '单日净新增',
+        right: 55,
+        top: 25,
+    },
+    grid: {
+        left: 55,
+        right: 55,
+        top: 35,
+        bottom: 25,
+    },
+    textStyle: {
+        fontFamily: 'Bahnschrift',
+    },
+    xAxis: {
+        name: '日期',
+        type: 'category',
+        nameTextStyle : {
+            fontFamily: 'Source Han Sans',
+        }
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    yAxis: {},
+    series: [],
+    dataset: [],
+}
+Papa.parse(`shanghai_daily_new_cases.csv?t=${(new Date()).getTime()}`, {
+    download: true,
+    skipEmptyLines: true,
+    dynamicTyping: true,
+    complete: function(results) {
+
+        let data_body = {
+            id: 'daily_new',
+            dimensions: results.data[0],
+            source: results.data.slice(1),
+        }
+        let data_dimension_cols = data_body.dimensions.slice(1);
+
+        dailyNewCasesChartOption.dataset.push(data_body);
+
+        for (const col of data_dimension_cols) {
+            dailyNewCasesChartOption.series.push({
+                type: 'bar', name: col, datasetId: 'daily_new', stack: true,
+                dimensions: data_body.dimensions,
+                encode: {x: 'date', y: col},
+                itemStyle: {
+                    color: `rgb(10,80,160)`
+                },
+            });
+        }
+
+        let stackTop = dailyNewCasesChartOption.series.pop();
+        stackTop['label'] = {
+            normal: {
+                show: true,
+                position: 'top',
+                fontSize: 24,
+                formatter: function (params) {
+                    return params.value.slice(1).reduce(
+                        (a, b) => a + b
+                    ).toString();
+                }
+            }
+        }
+        dailyNewCasesChartOption.series.push(stackTop);
+
+
+
+        dailyNewCasesChartInstance.setOption(dailyNewCasesChartOption);
+    }
+});
+
+// 无症状占比图
+const asymptomaticPropChartInstance = echarts.init(
+    document.getElementById('chart-asymptomatic-prop'), 
+    null,
+    {
+        renderer: 'svg',
+    }
+);
+let asymptomaticPropChartOption = {
+    title: {
+        text: '无症状在日增中占比',
+        right: 55,
+        bottom: 35,
+    },
+    grid: {
+        left: 55,
+        right: 55,
+        top: 100,
+        bottom: 25,
+    },
+    textStyle: {
+        fontFamily: 'Bahnschrift',
+    },
+    xAxis: {
+        name: '日期',
+        type: 'category',
+        nameTextStyle : {
+            fontFamily: 'Source Han Sans',
+        }
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        bottom: 70,
+        right: 55,
+        textStyle: {
+            fontFamily: 'Source Han Sans',
+        }
+    },
+    yAxis: {
+        type: "value",
+        name: "%",
+    },
+    series: [],
+    dataset: [],
+}
+Papa.parse(`asymptomatic_percent.csv?t=${(new Date()).getTime()}`, {
+    download: true,
+    skipEmptyLines: true,
+    dynamicTyping: true,
+    complete: function(results) {
+
+        let data_body = {
+            id: 'asymp_prop',
+            dimensions: results.data[0],
+            source: results.data.slice(1),
+        }
+        let label_spec = {上海:"{@[1]}%", 全国其他地区:"{@[2]}%"};
+        let data_dimension_cols = data_body.dimensions.slice(1);
+
+        asymptomaticPropChartOption.dataset.push(data_body);
+
+        for (const col of data_dimension_cols) {
+            asymptomaticPropChartOption.series.push({
+                type: 'line', name: col, datasetId: 'asymp_prop',
+                dimensions: data_body.dimensions,
+                encode: {x: 'date', y: col},
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top',
+                        fontSize: 24,
+                        formatter: label_spec[col],
+                    }
+                }
+            });
+        }
+
+
+        asymptomaticPropChartInstance.setOption(asymptomaticPropChartOption);
+    }
+});
+
+</script>
+
+</body>
+
+
+
+
+
+</html>
