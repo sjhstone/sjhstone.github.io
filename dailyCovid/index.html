@@ -68,17 +68,78 @@ function overall2png() {
     </div>
 </div>
 
+<div id="chart-lockdown-batch" style="width: 650px; height: 540px; background-color: white;">
+</div>
+
 <div id="chart-districts" style="width: 500px; height: 1750px; background-color: white;">
 </div>
 
+
+<!-- 封控批次 -->
+<script>
+const lockDownBatchInst = echarts.init(document.getElementById('chart-lockdown-batch'), null, {});
+let lockDownBatchOpt = {
+    textStyle: {
+        fontFamily: 'Bahnschrift',
+    },
+    title: {
+        text: '不同封控批次'
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+    },
+    yAxis: {
+        type: 'value',
+    },
+    series: [],
+    dataset: [],
+};
+Papa.parse(`lockdown_batch.csv?t=${(new Date()).getTime()}`, {
+    download: true,
+    skipEmptyLines: true,
+    dynamicTyping: true,
+    complete: function(results) {
+        console.log(results.data);
+        
+        let data_body = {
+            id: '封控批次',
+            dimensions: results.data[0],
+            source: results.data.slice(1),
+        }
+        // console.log(data_body);
+        let data_dimension_cols = data_body.dimensions;
+
+        lockDownBatchOpt.dataset.push(data_body);
+
+        // 每一列对应一个独立的条
+        for (const col of data_dimension_cols) {
+
+            if (col === '日期') {
+                continue;
+            }
+
+            lockDownBatchOpt.series.push({
+                name: col,
+                datasetId: '封控批次',
+                type: 'line',
+                stack: true,
+                areaStyle: {},
+                encode: {x:'日期',y:col}
+            });
+        }
+
+        console.log(lockDownBatchOpt)
+        lockDownBatchInst.setOption(lockDownBatchOpt);
+    }
+});
+</script>
+
+<!-- 分区分类 -->
 <script type="application/ecmascript">
-// const distPltInst = echarts.init(
-//     document.getElementById('chart-districts'), null, {renderer: 'svg',}
-// );
 const distPltInst = echarts.init(
     document.getElementById('chart-districts'), null, {}
 );
-
 let distPltOpt = {
     title: {
         text: (new Date()).toISOString().substring(5, 10) + '\n各区\n情况',
@@ -114,7 +175,6 @@ let distPltOpt = {
     series: [],
     dataset: [],
 }
-
 Papa.parse(`districtwise_within_quarantine.csv?t=${(new Date()).getTime()}`, {
     download: true,
     skipEmptyLines: true,
@@ -172,7 +232,6 @@ Papa.parse(`districtwise_within_quarantine.csv?t=${(new Date()).getTime()}`, {
         distPltInst.setOption(distPltOpt);
     }
 });
-
 Papa.parse(`districtwise_outside_quarantine.csv?t=${(new Date()).getTime()}`, {
     download: true,
     skipEmptyLines: true,
@@ -230,10 +289,10 @@ Papa.parse(`districtwise_outside_quarantine.csv?t=${(new Date()).getTime()}`, {
         distPltInst.setOption(distPltOpt);
     }
 });
+</script>
 
-
-
-
+<!--  概览总量 -->
+<script>
 // 概览图
 const overAllData = {
     totalFigure: document.querySelector('div#total-figure'),
