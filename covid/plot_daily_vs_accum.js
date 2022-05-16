@@ -19,7 +19,7 @@ let citynames = {
     hongkong: '香港',
     shanghai: '上海',
     beijing: '北京',
-    DPRK: '朝鲜全国',
+    DPRK: '朝鲜(全国)',
 };
 
 let citycolors = {
