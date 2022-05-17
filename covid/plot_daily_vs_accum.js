@@ -19,7 +19,7 @@ let citynames = {
     hongkong: '香港',
     shanghai: '上海',
     beijing: '北京',
-    DPRK: '朝鲜(全国)',
+    pyongyang: '平壤',
 };
 
 let citycolors = {
@@ -29,7 +29,7 @@ let citycolors = {
     hongkong: '#A0148E',//'#E20613',
     shanghai: '#FB9606',
     beijing: '#E60000',
-    DPRK: '#0C5396',
+    pyongyang: '#0C5396',
 }
 
 const dailyVsAccumChart = echarts.init(

@@ -100,14 +100,13 @@ Papa.parse(`lockdown_batch.csv?t=${(new Date()).getTime()}`, {
     skipEmptyLines: true,
     dynamicTyping: true,
     complete: function(results) {
-        console.log(results.data);
         
         let data_body = {
             id: '封控批次',
             dimensions: results.data[0],
             source: results.data.slice(1),
         }
-        // console.log(data_body);
+        
         let data_dimension_cols = data_body.dimensions;
 
         lockDownBatchOpt.dataset.push(data_body);
@@ -140,10 +139,12 @@ Papa.parse(`lockdown_batch.csv?t=${(new Date()).getTime()}`, {
 const distPltInst = echarts.init(
     document.getElementById('chart-districts'), null, {}
 );
+let yesterday_date = new Date();
+yesterday_date.setDate(yesterday_date.getDate() - 1);
 let distPltOpt = {
     title: {
-        text: (new Date()).toISOString().substring(5, 10) + '\n各区\n情况',
-        top: 535,
+        text: (yesterday_date.toISOString().substring(5, 10)) + '\n各区\n情况',
+        top: 575,
         right: 38,
         align: 'right',
         textStyle: {
@@ -180,14 +181,12 @@ Papa.parse(`districtwise_within_quarantine.csv?t=${(new Date()).getTime()}`, {
     skipEmptyLines: true,
     dynamicTyping: true,
     complete: function(results) {
-        // console.log(results.data);
         
         let data_body = {
             id: '各区闭环',
             dimensions: results.data[0],
             source: results.data.slice(1),
         }
-        // console.log(data_body);
         let data_dimension_cols = data_body.dimensions;
 
         distPltOpt.dataset.push(data_body);
@@ -237,14 +236,12 @@ Papa.parse(`districtwise_outside_quarantine.csv?t=${(new Date()).getTime()}`, {
     skipEmptyLines: true,
     dynamicTyping: true,
     complete: function(results) {
-        // console.log(results.data);
         
         let data_body = {
             id: '各区社会面',
             dimensions: results.data[0],
             source: results.data.slice(1),
         }
-        // console.log(data_body);
         let data_dimension_cols = data_body.dimensions;
 
         distPltOpt.dataset.push(data_body);

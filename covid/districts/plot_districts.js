@@ -19,7 +19,7 @@ let cities = {
     chongming: [],
 };
 
-const default_shown_city = {pudong: true};
+const default_shown_city = {pudong: true, jinshan: true};
 
 let citynames = {
     pudong: '浦东',
@@ -82,12 +82,12 @@ let option = {
     },
     toolbox: {
         feature: {
-            dataZoom: {},
-            dataView: {title: '原始数据表'},
-            saveAsImage: {title: '导出图片'},
+            // dataZoom: {},
+            // dataView: {title: '原始数据表'},
+            // saveAsImage: {title: '导出图片'},
             myAxisScale: {
                 show: true,
-                title: '线性/对数坐标切换',
+                title: '线性/对数切换',
                 icon: AXIS_ICON_PATH,
                 onclick: function (){
                     let opt = dailyVsAccumChart.getOption();
@@ -178,19 +178,32 @@ Papa.parse(`shanghai_by_district.csv?t=${(new Date()).getTime()}`, {
                 type: 'scatter', name: citynames[city], datasetId: 'main',
                 encode: {x: `${citynames[city]}_累计`, y: `${citynames[city]}`, tooltip:[0,1,i+2]},
                 emphasis: {focus: 'series'},
-                markPoint: {
-                    symbol: 'pin',
-                    symbolSize: 65,
+                markLine: {
+                    silent: true,
                     label: {
                         formatter: '{b}',
+                        position: 'insideEndTop',
                     },
                     data: [
                         {
-                            name: `${citynames[city]}\n峰值`,
+                            name: `${citynames[city]}峰值`,
                             type: 'max',
                         }
                     ]
-                }
+                },
+                // markPoint: {
+                //     symbol: 'pin',
+                //     symbolSize: 65,
+                //     label: {
+                //         formatter: '{b}',
+                //     },
+                //     data: [
+                //         {
+                //             name: `${citynames[city]}\n峰值`,
+                //             type: 'max',
+                //         }
+                //     ]
+                // }
             });
             option.legend.data.push(citynames[city])
             option.legend.selected[citynames[city]] = city in default_shown_city;
