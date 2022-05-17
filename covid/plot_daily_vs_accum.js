@@ -9,17 +9,19 @@ let cities = {
     shanghai: [],
     beijing: [],
     pyongyang: [],
+    taipei: [],
 };
 const default_shown_city = {shanghai: true, hongkong: true};
 
 let citynames = {
-    seoul: '首尔',
-    osaka: '大阪',
-    tokyo: '东京',
-    hongkong: '香港',
-    shanghai: '上海',
-    beijing: '北京',
-    pyongyang: '平壤',
+    seoul: '首尔特别市',
+    osaka: '大阪府',
+    tokyo: '东京府',
+    hongkong: '香港特别行政区',
+    shanghai: '上海市',
+    beijing: '北京市',
+    pyongyang: '平壤市',
+    taipei: '台北都市区',
 };
 
 let citycolors = {
@@ -30,6 +32,7 @@ let citycolors = {
     shanghai: '#FB9606',
     beijing: '#E60000',
     pyongyang: '#0C5396',
+    taipei: '#000095',
 }
 
 const dailyVsAccumChart = echarts.init(
