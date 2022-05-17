@@ -8,7 +8,7 @@ let cities = {
     hongkong: [],
     shanghai: [],
     beijing: [],
-    DPRK: [],
+    pyongyang: [],
 };
 const default_shown_city = {shanghai: true, hongkong: true};
 
