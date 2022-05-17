@@ -32,7 +32,7 @@ let citycolors = {
     shanghai: '#FB9606',
     beijing: '#E60000',
     pyongyang: '#0C5396',
-    taipei: '#000095',
+    taipei: '#A14245',
 }
 
 const dailyVsAccumChart = echarts.init(
