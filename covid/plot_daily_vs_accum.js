@@ -16,7 +16,7 @@ const default_shown_city = {shanghai: true, hongkong: true};
 let citynames = {
     seoul: '首尔特别市',
     osaka: '大阪府',
-    tokyo: '东京府',
+    tokyo: '东京都',
     hongkong: '香港特别行政区',
     shanghai: '上海市',
     beijing: '北京市',
