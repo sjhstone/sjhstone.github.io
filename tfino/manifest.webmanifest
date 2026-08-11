@@ -1,0 +1,15 @@
+{
+  "name": "TF · IN / OUT — Tiny Transformer Lab",
+  "short_name": "TF IN/OUT",
+  "description": "Explore pretraining, post-training, and inference with an on-device toy language model.",
+  "id": "/tfino/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#11120f",
+  "theme_color": "#11120f",
+  "icons": [
+    {"src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}
