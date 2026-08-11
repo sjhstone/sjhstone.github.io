@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11120f">
+  <meta name="description" content="An interactive, on-device lab for pretraining, post-training, and inference in Transformer-based language models.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>TF · IN / OUT — a tiny Transformer lab</title>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="TF in and out home">
+      <span class="brand-mark">TF</span>
+      <span>IN / OUT</span>
+    </a>
+    <div class="runtime" aria-label="Runtime status">
+      <span class="status-dot" id="wasmDot"></span><span id="wasmStatus">Wasm loading</span>
+      <span class="status-separator">/</span>
+      <span class="status-dot" id="gpuDot"></span><span id="gpuStatus">WebGPU checking</span>
+    </div>
+    <button class="install-button" id="installButton" hidden>Install app</button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow">A TINY TRANSFORMER, OPEN ON THE TABLE</p>
+      <h1>Language models are<br><em>made, shaped, then run.</em></h1>
+      <p class="lede">Train a pocket-sized causal model in your browser. Watch one set of weights move through the three stages behind today’s LLMs—without a server, account, or black box.</p>
+      <div class="hero-actions">
+        <button class="primary" data-jump="pretrain">Start with raw text <span>→</span></button>
+        <span class="local-note">Everything stays on this device.</span>
+      </div>
+      <div class="model-spec" aria-label="Toy model specification">
+        <div><strong>10</strong><span>tokens</span></div>
+        <div><strong>8</strong><span>dimensions</span></div>
+        <div><strong>1</strong><span>attention head</span></div>
+        <div><strong>80</strong><span>learned weights</span></div>
+      </div>
+    </section>
+
+    <nav class="stage-rail" aria-label="Model lifecycle stages">
+      <button class="stage-tab active" data-stage="pretrain" aria-pressed="true">
+        <span class="stage-number">01</span>
+        <span><strong>Pre-train</strong><small>Learn the pattern</small></span>
+      </button>
+      <div class="rail-arrow" aria-hidden="true">→</div>
+      <button class="stage-tab" data-stage="posttrain" aria-pressed="false">
+        <span class="stage-number">02</span>
+        <span><strong>Post-train</strong><small>Shape the behavior</small></span>
+      </button>
+      <div class="rail-arrow" aria-hidden="true">→</div>
+      <button class="stage-tab" data-stage="infer" aria-pressed="false">
+        <span class="stage-number">03</span>
+        <span><strong>Infer</strong><small>Generate a token</small></span>
+      </button>
+    </nav>
+
+    <section class="workspace">
+      <aside class="model-sidebar">
+        <div class="sidebar-heading">
+          <span>LIVE MODEL</span>
+          <button id="resetModel" class="text-button">reset</button>
+        </div>
+        <div class="model-orbit" aria-hidden="true">
+          <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+          <div class="model-core"><span>θ</span><small id="weightPulse">80 weights</small></div>
+        </div>
+        <dl class="metrics">
+          <div><dt>Training loss</dt><dd id="metricLoss">—</dd></div>
+          <div><dt>Examples seen</dt><dd id="metricExamples">0</dd></div>
+          <div><dt>Preference steps</dt><dd id="metricPrefs">0</dd></div>
+          <div><dt>Inference backend</dt><dd id="metricBackend">Wasm</dd></div>
+        </dl>
+        <p class="sidebar-note">The same <strong>θ</strong> travels through every stage. Only the output head is learned; attention is intentionally frozen so the changes stay legible.</p>
+      </aside>
+
+      <div class="stages">
+        <article class="stage-panel active" id="pretrain" aria-labelledby="pretrain-title">
+          <div class="panel-heading">
+            <div><span class="chapter">STAGE 01 / BASE MODEL</span><h2 id="pretrain-title">Compress text into prediction.</h2></div>
+            <span class="engine-tag">WASM KERNEL</span>
+          </div>
+          <p class="explain">Pretraining repeatedly hides the next token and adjusts weights to make it less surprising. A real model sees trillions of tokens; this one sees a tiny synthetic corpus you can read in full.</p>
+
+          <div class="lab-grid">
+            <div class="control-card">
+              <label for="corpusSelect">Training corpus</label>
+              <select id="corpusSelect">
+                <option value="balanced">Balanced sky facts</option>
+                <option value="east">East-heavy world</option>
+                <option value="west">West-heavy world</option>
+              </select>
+              <div class="corpus" id="corpusPreview" aria-live="polite"></div>
+              <label for="epochsRange">Passes through corpus <output id="epochsOutput">24</output></label>
+              <input id="epochsRange" type="range" min="1" max="60" value="24">
+              <button class="primary full" id="trainButton">Run pretraining <span>↗</span></button>
+            </div>
+            <div class="visual-card">
+              <div class="card-label"><span>LOSS / LOWER IS BETTER</span><span id="lossDelta">not trained</span></div>
+              <canvas id="lossChart" width="720" height="320" aria-label="Training loss curve"></canvas>
+              <div class="prediction-strip">
+                <span>After “the sun rises”</span>
+                <div class="mini-probs" id="pretrainPrediction"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mechanism">
+            <div class="mechanism-step"><span>TEXT</span><strong>the · sun · rises</strong><small>token IDs</small></div>
+            <i>→</i>
+            <div class="mechanism-step accent"><span>ATTENTION</span><strong>look backward</strong><small>causal context</small></div>
+            <i>→</i>
+            <div class="mechanism-step"><span>LOSS</span><strong>−log p(east)</strong><small>prediction error</small></div>
+            <i>→</i>
+            <div class="mechanism-step"><span>UPDATE</span><strong>θ ← θ − η∇θ</strong><small>Wasm SGD</small></div>
+          </div>
+        </article>
+
+        <article class="stage-panel" id="posttrain" aria-labelledby="posttrain-title" hidden>
+          <div class="panel-heading">
+            <div><span class="chapter">STAGE 02 / BEHAVIOR</span><h2 id="posttrain-title">Turn capability into preference.</h2></div>
+            <span class="engine-tag">PAIRWISE UPDATE</span>
+          </div>
+          <p class="explain">Post-training uses demonstrations and preference signals to make a capable base model more useful. Here, your choice pushes one continuation up and the other down—an intentionally compact analogue of preference optimization.</p>
+
+          <div class="preference-prompt">
+            <span class="speaker">USER</span>
+            <p>Complete the factual sentence: “the sun rises …”</p>
+          </div>
+          <div class="candidate-grid">
+            <button class="candidate" data-prefer="east" data-reject="west">
+              <span class="candidate-top"><b>A</b><small id="scoreEast">model score —</small></span>
+              <strong>in the east.</strong>
+              <span class="choose">Prefer this response <b>↗</b></span>
+            </button>
+            <button class="candidate" data-prefer="west" data-reject="east">
+              <span class="candidate-top"><b>B</b><small id="scoreWest">model score —</small></span>
+              <strong>in the west.</strong>
+              <span class="choose">Prefer this response <b>↗</b></span>
+            </button>
+          </div>
+          <div class="alignment-meter">
+            <div class="meter-label"><span>WEST</span><strong>Preference margin</strong><span>EAST</span></div>
+            <div class="meter-track"><div id="alignmentFill"></div><i id="alignmentMarker"></i></div>
+            <p id="preferenceMessage">Choose a response to apply one preference step.</p>
+          </div>
+          <div class="concept-cards">
+            <div><span>SFT</span><p>Show high-quality answers and continue next-token training.</p></div>
+            <div><span>RLHF / DPO</span><p>Use ranked answers to favor desired behavior over rejected behavior.</p></div>
+            <div><span>SAFETY</span><p>Teach boundaries, refusals, and calibrated uncertainty—not new world knowledge.</p></div>
+          </div>
+        </article>
+
+        <article class="stage-panel" id="infer" aria-labelledby="infer-title" hidden>
+          <div class="panel-heading">
+            <div><span class="chapter">STAGE 03 / GENERATION</span><h2 id="infer-title">Run the frozen model forward.</h2></div>
+            <span class="engine-tag gpu" id="inferTag">WEBGPU COMPUTE</span>
+          </div>
+          <p class="explain">Inference changes no weights. It turns a prompt into probability scores, samples one token, appends it, and repeats. Temperature reshapes confidence; top-p trims the long tail.</p>
+
+          <div class="inference-lab">
+            <div class="prompt-box">
+              <label for="promptInput">Prompt</label>
+              <input id="promptInput" value="the sun rises" autocomplete="off" spellcheck="false">
+              <div class="prompt-chips">
+                <button data-prompt="the sun rises">sun rises</button>
+                <button data-prompt="the moon glows">moon glows</button>
+                <button data-prompt="the sun sets">sun sets</button>
+              </div>
+              <div class="dual-controls">
+                <label>Temperature <output id="tempOutput">0.7</output><input id="tempRange" type="range" min="1" max="15" value="7"></label>
+                <label>Top-p <output id="topPOutput">0.90</output><input id="topPRange" type="range" min="5" max="10" value="9"></label>
+              </div>
+              <button class="primary full" id="generateButton">Generate 4 tokens <span>▶</span></button>
+            </div>
+            <div class="generation-card">
+              <div class="card-label"><span>OUTPUT STREAM</span><span id="latency">ready</span></div>
+              <div class="token-stream" id="tokenStream" aria-live="polite"><span class="ghost">Your generated tokens will appear here.</span></div>
+              <div class="probability-view">
+                <span class="prob-title">NEXT-TOKEN DISTRIBUTION</span>
+                <div id="probabilityBars"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="gpu-pipeline">
+            <div><span>1</span><strong>ATTENTION</strong><small>mix prompt context</small></div><i>→</i>
+            <div><span>2</span><strong>GPU SHADER</strong><small>W × hidden state</small></div><i>→</i>
+            <div><span>3</span><strong>SOFTMAX</strong><small>scores → probabilities</small></div><i>→</i>
+            <div><span>4</span><strong>SAMPLE</strong><small>select + repeat</small></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>TF · IN / OUT</span>
+    <p>A deliberately small model. The lifecycle is real; the scale is not.</p>
+    <a href="./README.md">How it works ↗</a>
+  </footer>
+  <noscript>This interactive lab needs JavaScript enabled.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
